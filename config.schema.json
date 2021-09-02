@@ -1,15 +1,21 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "YaleSyncAlarm",
   "pluginType": "platform",
   "singular": true,
   "schema": {
     "type": "object",
     "properties": {
-      "name": {
-        "title": "Name",
+      "username": {
+        "title": "username",
         "type": "string",
         "required": true,
-        "default": "Example Dynamic Platform"
+        "placeholder": "Your Yale username"
+      },
+      "password": {
+        "title": "password",
+        "type": "string",
+        "required": true,
+        "placeholder": "Your Yale password"
       }
     }
   }

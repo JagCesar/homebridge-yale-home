@@ -1,16 +1,15 @@
 {
-  "private": true,
-  "displayName": "Plugin Name",
-  "name": "homebridge-plugin-name",
+  "displayName": "Yale Sync Alarm",
+  "name": "homebridge-yale-sync-alarm",
   "version": "1.0.0",
-  "description": "A short description about what your plugin does.",
+  "description": "Homebridge plugin support for the Yale Sync Alarm.",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/USERNAME/GITHUB_PROJECT_NAME.git"
+    "url": "git://github.com/HenryQW/homebridge-yale-sync-alarm.git"
   },
   "bugs": {
-    "url": "https://github.com/USERNAME/GITHUB_PROJECT_NAME/issues"
+    "url": "https://github.com/HenryQW/homebridge-yale-sync-alarm/issues"
   },
   "engines": {
     "node": ">=12.13.0",
@@ -24,9 +23,14 @@
     "prepublishOnly": "npm run lint && npm run build"
   },
   "keywords": [
-    "homebridge-plugin"
+    "homebridge-plugin",
+    "yale sync alarm",
+    "yale alarm",
+    "yale"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "yalesyncalarm": "2.0.4"
+  },
   "devDependencies": {
     "@types/node": "^14.14.31",
     "@typescript-eslint/eslint-plugin": "^4.16.1",
