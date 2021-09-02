@@ -85,16 +85,12 @@ export class YaleSyncAlarmPlatformAccessory {
       this.service.getCharacteristic(this.platform.Characteristic.SecuritySystemTargetState)
         .onSet(this.setPanelState.bind(this));
     } else if (type === 'motionSensor') {
-      this.service.updateCharacteristic(this.platform.Characteristic.MotionDetected, accessory.context.state);
-
       this.service.getCharacteristic(this.platform.Characteristic.MotionDetected)
         .onGet(this.getMotionSensorState.bind(this));
 
       this.service.getCharacteristic(this.platform.Characteristic.MotionDetected)
         .onSet(this.setMotionSensorState.bind(this));
     } else if (type === 'contactSensor') {
-      this.service.updateCharacteristic(this.platform.Characteristic.MotionDetected, accessory.context.state);
-
       this.service.getCharacteristic(this.platform.Characteristic.ContactSensorState)
         .onGet(this.getContactSensorState.bind(this));
 
@@ -120,7 +116,7 @@ export class YaleSyncAlarmPlatformAccessory {
     const targetState = this.stateToPanelState(state);
     this.platform.yaleAPI.setPanelState(targetState);
 
-    this.service.updateCharacteristic(this.platform.Characteristic.SecuritySystemCurrentState, this.ArmStates[state]);
+    this.service.getCharacteristic(this.platform.Characteristic.SecuritySystemCurrentState).updateValue(this.ArmStates[state]);
   }
 
 
@@ -132,18 +128,29 @@ export class YaleSyncAlarmPlatformAccessory {
 
   setContactSensorState(state) {
     this.platform.log.debug('Setting Contact Sensor State:', state);
-    this.accessory.context.state = state;
+
+    this.platform.yaleAPI.contactSensors().then(s => {
+      const status = s[this.accessory.context.device.identifier].state;
+
+      this.service.getCharacteristic(this.platform.Characteristic.ContactSensorState).updateValue(status === 0 ? this.platform.Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : this.platform.Characteristic.ContactSensorState.CONTACT_DETECTED);
+
+    });
   }
 
-
   getMotionSensorState() {
-    this.platform.log.debug('Getting Panel State:');
+    this.platform.log.debug('Getting Motion Sensor State:');
     return this.accessory.context.state !== 0;
   }
 
   setMotionSensorState(state) {
     this.platform.log.debug('Setting Motion Sensor State:', state);
-    this.accessory.context.state = state;
+
+    this.platform.yaleAPI.contactSensors().then(s => {
+      const status = s[this.accessory.context.device.identifier].state;
+
+      this.service.getCharacteristic(this.platform.Characteristic.MotionDetected).updateValue(status === 1);
+
+    });
   }
 
 }
