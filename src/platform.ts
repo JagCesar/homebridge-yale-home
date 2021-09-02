@@ -72,7 +72,8 @@ export class YaleSyncAlarm implements DynamicPlatformPlugin {
 
       this.yaleAPI.motionSensors().then((motionSensors) => {
         if (motionSensors) {
-          for (const motionSensor of Object.entries(motionSensors)) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          for (const [key, motionSensor] of Object.entries(motionSensors)) {
             const device = this.createDevice(motionSensor, 'motionSensor');
             this.registerDevice(device);
           }
@@ -84,7 +85,7 @@ export class YaleSyncAlarm implements DynamicPlatformPlugin {
       this.yaleAPI.contactSensors().then((contactSensors) => {
         if (contactSensors) {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          for (const contactSensor of Object.entries(contactSensors)) {
+          for (const [key, contactSensor] of Object.entries(contactSensors)) {
             const device = this.createDevice(contactSensor, 'contactSensor');
             this.registerDevice(device);
           }
