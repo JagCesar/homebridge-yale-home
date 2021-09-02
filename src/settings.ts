@@ -6,4 +6,4 @@ export const PLATFORM_NAME = 'YaleSyncAlarm';
 /**
  * This must match the name of your plugin as defined the package.json
  */
-export const PLUGIN_NAME = 'homebridge-yale-sync-alarm';
+export const PLUGIN_NAME = '@henrywang/homebridge-yale-sync-alarm';

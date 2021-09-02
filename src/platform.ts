@@ -4,7 +4,6 @@ import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { YaleSyncAlarmPlatformAccessory } from './platformAccessory';
 
 import { Yale } from 'yalesyncalarm';
-import { ContactSensor, MotionSensor, Panel, Device } from 'yalesyncalarm/dist/Model';
 
 /**
  * HomebridgePlatform
@@ -39,7 +38,9 @@ export class YaleSyncAlarm implements DynamicPlatformPlugin {
     this.api.on('didFinishLaunching', () => {
       log.debug('Executed didFinishLaunching callback');
       // run the method to discover / register your devices as accessories
-      this.discoverDevices();
+      this.yaleAPI.update().then(() => {
+        this.discoverDevices();
+      });
     });
   }
 
@@ -60,19 +61,18 @@ export class YaleSyncAlarm implements DynamicPlatformPlugin {
    * must not be registered again to prevent "duplicate UUID" errors.
    */
   discoverDevices() {
-    this.yaleAPI.update().then(() => {
-      this.yaleAPI.panel().then((panel) => {
-        if (panel) {
-          const device = this.createDevice(panel, 'panel');
-          this.registerDevice(device);
-        } else {
-          this.log.error('Error getting Yale Panel.');
-        }
-      });
+
+    this.yaleAPI.panel().then((panel) => {
+      if (panel) {
+        const device = this.createDevice(panel, 'panel');
+        this.registerDevice(device);
+      } else {
+        this.log.error('Error getting Yale Panel.');
+      }
 
       this.yaleAPI.motionSensors().then((motionSensors) => {
         if (motionSensors) {
-          for (const [key, motionSensor] of Object.entries(motionSensors)) {
+          for (const motionSensor of Object.entries(motionSensors)) {
             const device = this.createDevice(motionSensor, 'motionSensor');
             this.registerDevice(device);
           }
@@ -83,7 +83,8 @@ export class YaleSyncAlarm implements DynamicPlatformPlugin {
 
       this.yaleAPI.contactSensors().then((contactSensors) => {
         if (contactSensors) {
-          for (const [key, contactSensor] of Object.entries(contactSensors)) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          for (const contactSensor of Object.entries(contactSensors)) {
             const device = this.createDevice(contactSensor, 'contactSensor');
             this.registerDevice(device);
           }

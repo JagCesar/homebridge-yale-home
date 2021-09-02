@@ -1,5 +1,4 @@
-import { Service, PlatformAccessory, Characteristic } from 'homebridge';
-import { Panel } from 'yalesyncalarm/dist/Model';
+import { Service, PlatformAccessory } from 'homebridge';
 
 import { YaleSyncAlarm } from './platform';
 
@@ -32,6 +31,7 @@ export class YaleSyncAlarmPlatformAccessory {
       .setCharacteristic(this.platform.Characteristic.Model, accessory.context.device.name)
       .setCharacteristic(this.platform.Characteristic.SerialNumber, accessory.context.device.identifier);
 
+    // eslint-disable-next-line max-len
     this.service = this.accessory.getService(this.platform.Service.SecuritySystem) || this.accessory.addService(this.platform.Service.SecuritySystem);
 
     // set the service name, this is what is displayed as the default name on the Home app
