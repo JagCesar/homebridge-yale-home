@@ -1,7 +1,7 @@
 {
   "displayName": "Yale Sync Alarm",
   "name": "homebridge-yale-sync-alarm",
-  "version": "1.0.0",
+  "version": "1.0.1-beta.0",
   "description": "Homebridge plugin support for the Yale Sync Alarm.",
   "license": "Apache-2.0",
   "repository": {
