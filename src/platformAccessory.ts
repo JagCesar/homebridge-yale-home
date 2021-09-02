@@ -1,4 +1,6 @@
+/* eslint-disable max-len */
 import { Service, PlatformAccessory } from 'homebridge';
+import { Panel } from 'yalesyncalarm/dist/Model';
 
 import { YaleSyncAlarm } from './platform';
 
@@ -15,10 +17,40 @@ export class YaleSyncAlarmPlatformAccessory {
    * You should implement your own code to track the state of your accessory
    */
   private ArmStates = {
-    Arm: 'arm',
-    Disarm: 'disarm',
-    Home: 'home',
-    Night: 'home',
+    arm: this.platform.Characteristic.SecuritySystemTargetState.AWAY_ARM,
+    disarm: this.platform.Characteristic.SecuritySystemTargetState.DISARM,
+    home: this.platform.Characteristic.SecuritySystemTargetState.STAY_ARM,
+  };
+
+  private stateToPanelState = (state) => {
+    switch (state) {
+      case state === this.platform.Characteristic.SecuritySystemTargetState.AWAY_ARM:
+        return Panel.State.Armed;
+        break;
+
+      case state === this.platform.Characteristic.SecuritySystemTargetState.DISARM:
+        return Panel.State.Disarmed;
+        break;
+
+      case state === this.platform.Characteristic.SecuritySystemTargetState.NIGHT_ARM:
+        // Yale uses Home arm for both 'home' and 'night'
+        return Panel.State.Home;
+        break;
+
+      case state === this.platform.Characteristic.SecuritySystemTargetState.STAY_ARM:
+        return Panel.State.Home;
+        break;
+
+      default:
+        return Panel.State.Home;
+        break;
+    }
+  };
+
+  private AccessoryTypes = {
+    panel: this.platform.Service.SecuritySystem,
+    motionSensor: this.platform.Service.MotionSensor,
+    contactSensor: this.platform.Service.ContactSensor,
   };
 
   constructor(
@@ -26,103 +58,92 @@ export class YaleSyncAlarmPlatformAccessory {
     private readonly accessory: PlatformAccessory,
   ) {
 
+
+    const { name, type } = accessory.context.device;
+
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Yale')
-      .setCharacteristic(this.platform.Characteristic.Model, accessory.context.device.name)
-      .setCharacteristic(this.platform.Characteristic.SerialNumber, accessory.context.device.identifier);
+      .setCharacteristic(this.platform.Characteristic.Model, type)
+      .setCharacteristic(this.platform.Characteristic.SerialNumber, accessory.UUID);
+
 
     // eslint-disable-next-line max-len
-    this.service = this.accessory.getService(this.platform.Service.SecuritySystem) || this.accessory.addService(this.platform.Service.SecuritySystem);
+    this.service = this.accessory.getService(this.AccessoryTypes[type]) || this.accessory.addService(this.AccessoryTypes[type]);
 
     // set the service name, this is what is displayed as the default name on the Home app
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
-    this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.name);
+    this.service.setCharacteristic(this.platform.Characteristic.Name, `${name} ${type}`);
 
     // each service must implement at-minimum the "required characteristics" for the given service type
     // see https://developers.homebridge.io/#/service/Lightbulb
 
     // create handlers for required characteristics
-    this.service.getCharacteristic(this.platform.Characteristic.SecuritySystemCurrentState)
-      .onGet(this.getPanelState.bind(this));
+    if (type === 'panel') {
+      this.service.getCharacteristic(this.platform.Characteristic.SecuritySystemCurrentState)
+        .onGet(this.getPanelState.bind(this));
 
-    this.service.getCharacteristic(this.platform.Characteristic.SecuritySystemTargetState)
-      .onGet(this.getPanelState.bind(this))
-      .onSet(this.setPanelState.bind(this));
+      this.service.getCharacteristic(this.platform.Characteristic.SecuritySystemTargetState)
+        .onSet(this.setPanelState.bind(this));
+    } else if (type === 'motionSensor') {
+      this.service.updateCharacteristic(this.platform.Characteristic.MotionDetected, accessory.context.state);
 
-    /**
-     * Creating multiple services of the same type.
-     *
-     * To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
-     * when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
-     * this.accessory.getService('NAME') || this.accessory.addService(this.platform.Service.Lightbulb, 'NAME', 'USER_DEFINED_SUBTYPE_ID');
-     *
-     * The USER_DEFINED_SUBTYPE must be unique to the platform accessory (if you platform exposes multiple accessories, each accessory
-     * can use the same sub type id.)
-     */
+      this.service.getCharacteristic(this.platform.Characteristic.MotionDetected)
+        .onGet(this.getMotionSensorState.bind(this));
 
-    // Example: add two "motion sensor" services to the accessory
-    const motionSensorOneService = this.accessory.getService('Motion Sensor One Name') ||
-      this.accessory.addService(this.platform.Service.MotionSensor, 'Motion Sensor One Name', 'YourUniqueIdentifier-1');
+      this.service.getCharacteristic(this.platform.Characteristic.MotionDetected)
+        .onSet(this.setMotionSensorState.bind(this));
+    } else if (type === 'contactSensor') {
+      this.service.updateCharacteristic(this.platform.Characteristic.MotionDetected, accessory.context.state);
 
-    const motionSensorTwoService = this.accessory.getService('Motion Sensor Two Name') ||
-      this.accessory.addService(this.platform.Service.MotionSensor, 'Motion Sensor Two Name', 'YourUniqueIdentifier-2');
+      this.service.getCharacteristic(this.platform.Characteristic.ContactSensorState)
+        .onGet(this.getContactSensorState.bind(this));
 
-    /**
-     * Updating characteristics values asynchronously.
-     *
-     * Example showing how to update the state of a Characteristic asynchronously instead
-     * of using the `on('get')` handlers.
-     * Here we change update the motion sensor trigger states on and off every 10 seconds
-     * the `updateCharacteristic` method.
-     *
-     */
-    let motionDetected = false;
-    setInterval(() => {
-      // EXAMPLE - inverse the trigger
-      motionDetected = !motionDetected;
-
-      // push the new value to HomeKit
-      motionSensorOneService.updateCharacteristic(this.platform.Characteristic.MotionDetected, motionDetected);
-      motionSensorTwoService.updateCharacteristic(this.platform.Characteristic.MotionDetected, !motionDetected);
-
-      this.platform.log.debug('Triggering motionSensorOneService:', motionDetected);
-      this.platform.log.debug('Triggering motionSensorTwoService:', !motionDetected);
-    }, 10000);
+      this.service.getCharacteristic(this.platform.Characteristic.ContactSensorState)
+        .onSet(this.setContactSensorState.bind(this));
+    }
   }
 
-  /**
-   * Handle requests to get the current value of the "Security System Target State" characteristic
-   */
   getPanelState() {
-    this.platform.log.debug('Triggered getPanelState');
+    this.platform.log.debug('Getting Panel State:');
 
     let currentState;
 
     this.platform.yaleAPI.getPanelState().then((state) => {
-      currentState = this.convertState(state);
+      currentState = this.ArmStates[state];
     });
 
     return currentState;
   }
 
-  /**
-   * Handle requests to set the "Security System Target State" characteristic
-   */
   setPanelState(state) {
-    this.platform.log.debug('Triggered setPanelState:', state);
+    this.platform.log.info('Setting Panel State:', state);
+    const targetState = this.stateToPanelState(state);
+    this.platform.yaleAPI.setPanelState(targetState);
 
-    this.platform.yaleAPI.setPanelState(state);
+    this.service.updateCharacteristic(this.platform.Characteristic.SecuritySystemCurrentState, this.ArmStates[state]);
   }
 
-  convertState(state) {
-    switch (state) {
-      case 'home':
-        return this.platform.Characteristic.SecuritySystemCurrentState.NIGHT_ARM;
-      case 'arm':
-        return this.platform.Characteristic.SecuritySystemCurrentState.AWAY_ARM;
-      case 'disarm':
-        return this.platform.Characteristic.SecuritySystemCurrentState.DISARMED;
-    }
+
+  getContactSensorState() {
+    this.platform.log.debug('Getting Contact Sensor State:');
+
+    return this.accessory.context.state ? this.platform.Characteristic.ContactSensorState.CONTACT_NOT_DETECTED : this.platform.Characteristic.ContactSensorState.CONTACT_DETECTED;
+  }
+
+  setContactSensorState(state) {
+    this.platform.log.debug('Setting Contact Sensor State:', state);
+    this.accessory.context.state = state;
+  }
+
+
+  getMotionSensorState() {
+    this.platform.log.debug('Getting Panel State:');
+    return this.accessory.context.state !== 0;
+  }
+
+  setMotionSensorState(state) {
+    this.platform.log.debug('Setting Motion Sensor State:', state);
+    this.accessory.context.state = state;
   }
 
 }
