@@ -48,6 +48,16 @@
     "source-map-support" "^0.5.19"
     "tslib" "^2.0.3"
 
+"@jagcesar/yalesyncalarm@^2.1.0":
+  "integrity" "sha512-VN4Zs0iILerL444kQa+AGEAPK6+LjGn5EGnFZTBZh7bqrWwEZiYgRnmWN5l0W+Qt+5iJ16U+3eV0XmyGw6vBsg=="
+  "resolved" "https://registry.npmjs.org/@jagcesar/yalesyncalarm/-/yalesyncalarm-2.1.0.tgz"
+  "version" "2.1.0"
+  dependencies:
+    "@types/node-fetch" "^2.5.4"
+    "await-lock" "^2.0.1"
+    "node-fetch" "^1.7.3"
+    "type-safe-json-decoder" "^0.2.0"
+
 "@nodelib/fs.scandir@2.1.4":
   "integrity" "sha512-33g3pMJk3bg5nXbL/+CY6I2eJDzZAni49PfJnL5fghPTggPvBd/pFNSgJsdAgWptuFu7qq/ERvOYFlhvsLTCKA=="
   "resolved" "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.4.tgz"
@@ -2237,15 +2247,6 @@
   "integrity" "sha512-PSNhEJDejZYV7h50BohL09Er9VaIefr2LMAf3OEmpCkjOi34eYyQYAXUTjEQtZJTKcF0E2UKTh+osDLsgNim9Q=="
   "resolved" "https://registry.npmjs.org/xdg-basedir/-/xdg-basedir-4.0.0.tgz"
   "version" "4.0.0"
-
-"yalesyncalarm@github:JagCesar/yalesyncalarm#master":
-  "resolved" "git+ssh://git@github.com/JagCesar/yalesyncalarm.git#ad1ba849d82a999f10d2f8678c1ec0803163ff6b"
-  "version" "2.0.4"
-  dependencies:
-    "@types/node-fetch" "^2.5.4"
-    "await-lock" "^2.0.1"
-    "node-fetch" "^1.7.3"
-    "type-safe-json-decoder" "^0.2.0"
 
 "yallist@^4.0.0":
   "integrity" "sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A=="

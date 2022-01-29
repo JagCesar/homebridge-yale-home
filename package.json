@@ -32,7 +32,7 @@
     "yale doorman"
   ],
   "dependencies": {
-    "yalesyncalarm": "github:JagCesar/yalesyncalarm#master"
+    "@jagcesar/yalesyncalarm": "^2.1.0"
   },
   "devDependencies": {
     "@types/node": "^14.14.31",
