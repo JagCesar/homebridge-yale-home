@@ -51,6 +51,7 @@ export class YaleSyncAlarmPlatformAccessory {
     panel: this.platform.Service.SecuritySystem,
     motionSensor: this.platform.Service.MotionSensor,
     contactSensor: this.platform.Service.ContactSensor,
+    doorLock: this.platform.Service.DoorLock,
   };
 
   constructor(
