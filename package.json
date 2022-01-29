@@ -1,6 +1,6 @@
 {
   "displayName": "Homebridge Yale Home",
-  "name": "homebridge_yale_home",
+  "name": "homebridge-yale-home",
   "version": "1.0.5",
   "description": "Homebridge plugin support for Yale Home.",
   "license": "Apache-2.0",
