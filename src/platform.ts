@@ -93,6 +93,18 @@ export class YaleSyncAlarm implements DynamicPlatformPlugin {
           this.log.error('Error getting Yale Contact Sensors.');
         }
       });
+
+      this.yaleAPI.doorLocks().then((doorLocks) => {
+        if (doorLocks) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          for (const [key, doorLock] of Object.entries(doorLocks)) {
+            const device = this.createDevice(doorLock, 'doorLock');
+            this.registerDevice(device);
+          }
+        } else {
+          this.log.error('Error getting Yale Contact Sensors.');
+        }
+      });
     });
   }
 

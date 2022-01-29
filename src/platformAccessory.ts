@@ -96,6 +96,12 @@ export class YaleSyncAlarmPlatformAccessory {
 
       this.service.getCharacteristic(this.platform.Characteristic.ContactSensorState)
         .onSet(this.setContactSensorState.bind(this));
+    } else if (type === 'doorLock') {
+      this.service.getCharacteristic(this.platform.Characteristic.LockCurrentState)
+        .onGet(this.getLockState.bind(this));
+
+      this.service.getCharacteristic(this.platform.Characteristic.LockTargetState)
+        .onSet(this.setLockState.bind(this));
     }
   }
 
@@ -119,6 +125,25 @@ export class YaleSyncAlarmPlatformAccessory {
     this.service.getCharacteristic(this.platform.Characteristic.SecuritySystemCurrentState).updateValue(this.ArmStates[state]);
   }
 
+  getLockState() {
+    this.platform.log.debug('Getting Door Lock State:');
+    return this.accessory.context.state ? this.platform.Characteristic.LockTargetState.SECURED : this.platform.Characteristic.LockTargetState.UNSECURED;
+  }
+
+  setLockState(state) {
+    this.platform.log.info('Setting Lock State:', state);
+    // const targetState = this.stateToPanelState(state);
+    // this.platform.yaleAPI.setPanelState(targetState);
+
+    // this.service.getCharacteristic(this.platform.Characteristic.SecuritySystemCurrentState).updateValue(this.ArmStates[state]);
+
+    this.platform.yaleAPI.doorLocks().then(s => {
+      const status = s[this.accessory.context.device.identifier].state;
+
+      this.service.getCharacteristic(this.platform.Characteristic.LockCurrentState).updateValue(status === 0 ? this.platform.Characteristic.LockTargetState.SECURED : this.platform.Characteristic.LockTargetState.UNSECURED);
+
+    });
+  }
 
   getContactSensorState() {
     this.platform.log.debug('Getting Contact Sensor State:');
