@@ -128,7 +128,7 @@ export class YaleSyncAlarmPlatformAccessory {
 
   getLockState() {
     this.platform.log.debug('Getting Door Lock State:');
-    return this.accessory.context.state ? this.platform.Characteristic.LockTargetState.SECURED : this.platform.Characteristic.LockTargetState.UNSECURED;
+    return this.accessory.context.state ? this.platform.Characteristic.LockTargetState.UNSECURED : this.platform.Characteristic.LockTargetState.SECURED;
   }
 
   setLockState(state) {
@@ -142,7 +142,6 @@ export class YaleSyncAlarmPlatformAccessory {
       const status = s[this.accessory.context.device.identifier].state;
 
       this.service.getCharacteristic(this.platform.Characteristic.LockCurrentState).updateValue(status === 0 ? this.platform.Characteristic.LockTargetState.SECURED : this.platform.Characteristic.LockTargetState.UNSECURED);
-
     });
   }
 
