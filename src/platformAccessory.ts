@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { Service, PlatformAccessory } from 'homebridge';
-import { Panel } from 'yalesyncalarm/dist/Model';
+import { Panel } from '@jagcesar/yalesyncalarm/dist/Model';
 
 import { YaleSyncAlarm } from './platform';
 

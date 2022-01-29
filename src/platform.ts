@@ -3,7 +3,7 @@ import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { YaleSyncAlarmPlatformAccessory } from './platformAccessory';
 
-import { Yale } from 'yalesyncalarm';
+import { Yale } from '@jagcesar/yalesyncalarm';
 
 /**
  * HomebridgePlatform
