@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { Service, PlatformAccessory } from 'homebridge';
-import { Panel } from '@jagcesar/yalesyncalarm/dist/Model';
+import { Panel, DoorLock } from '@jagcesar/yalesyncalarm/dist/Model';
 
 import { YaleSyncAlarm } from './platform';
 
@@ -46,6 +46,19 @@ export class YaleSyncAlarmPlatformAccessory {
         break;
     }
   };
+
+  private stateToDoorLockState = (state) => {
+    switch (state) {
+      case state === this.platform.Characteristic.LockTargetState.UNSECURED:
+      return DoorLock.State.unlocked
+
+      case state === this.platform.Characteristic.LockTargetState.SECURED:
+      return DoorLock.State.locked
+
+      default:
+      return DoorLock.State.unlocked
+    }
+  }
 
   private AccessoryTypes = {
     panel: this.platform.Service.SecuritySystem,
@@ -133,15 +146,15 @@ export class YaleSyncAlarmPlatformAccessory {
 
   setLockState(state) {
     this.platform.log.info('Setting Lock State:', state);
-    // const targetState = this.stateToPanelState(state);
-    // this.platform.yaleAPI.setPanelState(targetState);
-
-    // this.service.getCharacteristic(this.platform.Characteristic.SecuritySystemCurrentState).updateValue(this.ArmStates[state]);
+    const targetState = this.stateToDoorLockState(state);
 
     this.platform.yaleAPI.doorLocks().then(s => {
-      const status = s[this.accessory.context.device.identifier].state;
+      const doorLock = s[this.accessory.context.device.identifier];
+      const state = doorLock.state;
 
-      this.service.getCharacteristic(this.platform.Characteristic.LockCurrentState).updateValue(status === 0 ? this.platform.Characteristic.LockTargetState.SECURED : this.platform.Characteristic.LockTargetState.UNSECURED);
+      this.platform.yaleAPI.setDoorLockState(doorLock, targetState);
+
+      this.service.getCharacteristic(this.platform.Characteristic.LockCurrentState).updateValue(targetState === 0 ? this.platform.Characteristic.LockTargetState.SECURED : this.platform.Characteristic.LockTargetState.UNSECURED);
     });
   }
 
