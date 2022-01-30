@@ -152,6 +152,9 @@ export class YaleSyncAlarmPlatformAccessory {
 
     const doorLock = locks[this.accessory.context.device.identifier];
 
+    this.platform.log.info('Locks:', locks);
+    this.platform.log.info('Lock:', doorLock);
+
     const responseState = await this.platform.yaleAPI.setDoorLockState(doorLock, targetState);
     this.platform.log.info('Yale response state:', responseState);
 
