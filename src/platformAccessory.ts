@@ -144,17 +144,18 @@ export class YaleSyncAlarmPlatformAccessory {
     return this.accessory.context.state ? this.platform.Characteristic.LockTargetState.UNSECURED : this.platform.Characteristic.LockTargetState.SECURED;
   }
 
-  setLockState(state) {
+  async setLockState(state) {
     this.platform.log.info('Setting Lock State:', state);
     const targetState = this.stateToDoorLockState(state);
 
-    this.platform.yaleAPI.doorLocks().then(s => {
-      const doorLock = s[this.accessory.context.device.identifier];
+    const locks = this.platform.yaleAPI.doorLocks()
 
-      this.platform.yaleAPI.setDoorLockState(doorLock, targetState);
+    const doorLock = locks[this.accessory.context.device.identifier];
 
-      this.service.getCharacteristic(this.platform.Characteristic.LockCurrentState).updateValue(targetState === 0 ? this.platform.Characteristic.LockTargetState.SECURED : this.platform.Characteristic.LockTargetState.UNSECURED);
-    });
+    const responseState = await this.platform.yaleAPI.setDoorLockState(doorLock, targetState);
+    this.platform.log.info('Yale response state:', responseState);
+
+    this.service.getCharacteristic(this.platform.Characteristic.LockCurrentState).updateValue(responseState === 0 ? this.platform.Characteristic.LockTargetState.SECURED : this.platform.Characteristic.LockTargetState.UNSECURED);
   }
 
   getContactSensorState() {
