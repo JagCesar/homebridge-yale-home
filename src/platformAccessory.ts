@@ -50,13 +50,13 @@ export class YaleSyncAlarmPlatformAccessory {
   private stateToDoorLockState = (state) => {
     switch (state) {
       case state === this.platform.Characteristic.LockTargetState.UNSECURED:
-      return DoorLock.State.unlocked
+        return DoorLock.State.unlocked;
 
       case state === this.platform.Characteristic.LockTargetState.SECURED:
-      return DoorLock.State.locked
+        return DoorLock.State.locked;
 
       default:
-      return DoorLock.State.unlocked
+        return DoorLock.State.unlocked;
     }
   }
 
@@ -150,7 +150,6 @@ export class YaleSyncAlarmPlatformAccessory {
 
     this.platform.yaleAPI.doorLocks().then(s => {
       const doorLock = s[this.accessory.context.device.identifier];
-      const state = doorLock.state;
 
       this.platform.yaleAPI.setDoorLockState(doorLock, targetState);
 
