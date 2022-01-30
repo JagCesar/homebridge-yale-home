@@ -148,7 +148,7 @@ export class YaleSyncAlarmPlatformAccessory {
     this.platform.log.info('Setting Lock State:', state);
     const targetState = this.stateToDoorLockState(state);
 
-    const locks = this.platform.yaleAPI.doorLocks()
+    const locks = this.platform.yaleAPI.doorLocks();
 
     const doorLock = locks[this.accessory.context.device.identifier];
 
