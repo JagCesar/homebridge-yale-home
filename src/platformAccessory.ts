@@ -58,7 +58,7 @@ export class YaleSyncAlarmPlatformAccessory {
       default:
         return DoorLock.State.unlocked;
     }
-  }
+  };
 
   private AccessoryTypes = {
     panel: this.platform.Service.SecuritySystem,
