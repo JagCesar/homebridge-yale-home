@@ -27,6 +27,7 @@ export class YaleSyncAlarm implements DynamicPlatformPlugin {
     this.yaleAPI = new Yale(
       this.config.username,
       this.config.password,
+      this.config.pincode,
     );
 
     this.log.debug('Finished initializing platform:', this.config.name);
