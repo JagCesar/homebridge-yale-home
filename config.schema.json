@@ -1,5 +1,5 @@
 {
-  "pluginAlias": "YaleSyncAlarm",
+  "pluginAlias": "YaleHome",
   "pluginType": "platform",
   "singular": true,
   "schema": {
@@ -16,6 +16,12 @@
         "type": "string",
         "required": true,
         "placeholder": "Your Yale password"
+      },
+      "pincode": {
+        "title": "Pin code",
+        "type": "string",
+        "required": false,
+        "placeholder": "123456"
       }
     }
   }
