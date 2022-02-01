@@ -49,9 +49,9 @@
     "tslib" "^2.0.3"
 
 "@jagcesar/yalesyncalarm@^2.1.0":
-  "integrity" "sha512-uBJa8NrGmZ3lIz++NXyCQ2sxa4o1PBq2QZ17QxNfDaI3VO6nqoIv9M4MFCSQ55cS66Pn0xhGtzqA6dnflZHmcw=="
-  "resolved" "https://registry.npmjs.org/@jagcesar/yalesyncalarm/-/yalesyncalarm-2.1.8.tgz"
-  "version" "2.1.8"
+  "integrity" "sha512-XjF/5F7fdh6wlJ20S3aBMlDWZ8YRqeaJc+ZHeiEMwH/6idzGoDZmHqQU45BtVkxtaOfH2GG0GlIfZQhBtS1ZjA=="
+  "resolved" "https://registry.npmjs.org/@jagcesar/yalesyncalarm/-/yalesyncalarm-2.1.9.tgz"
+  "version" "2.1.9"
   dependencies:
     "@types/node-fetch" "^2.5.4"
     "await-lock" "^2.0.1"
